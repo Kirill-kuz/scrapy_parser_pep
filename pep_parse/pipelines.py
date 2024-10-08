@@ -1,4 +1,5 @@
 import csv
+from collections import defaultdict
 
 from pep_parse.settings import (BASE_DIR,
                                 DIR_OUTPUT,
@@ -8,17 +9,18 @@ from pep_parse.settings import (BASE_DIR,
 
 
 class PepParsePipeline:
-    def open_spider(self, spider):
-        self.results = {}
+    def __init__(self):
+        self.results = defaultdict(int)
         self.result_dir = BASE_DIR / DIR_OUTPUT
-        self.result_dir.mkdir(exist_ok=True)
+        if not self.result_dir.exists():
+            self.result_dir.mkdir(parents=True, exist_ok=True)
+
+    def open_spider(self, spider):
+        pass
 
     def process_item(self, item, spider):
         pep_status = item['status']
-        if self.results.get(pep_status):
-            self.results[pep_status] += 1
-        else:
-            self.results[pep_status] = 1
+        self.results[pep_status] += 1
         return item
 
     def close_spider(self, spider):
@@ -26,8 +28,7 @@ class PepParsePipeline:
             time=TIME_NOW)
         with open(file_dir, mode='w', encoding='utf-8') as f:
             writer = csv.writer(f, dialect='unix')
-            writer.writerow((FIELDS_NAME))
-            for key, val in self.results.items():
-                writer.writerow([key, val])
-            writer.writerow(
-                ['Total', sum(self.results.values())])
+            data = [FIELDS_NAME] + [
+                [key, val] for key, val in self.results.items()] + [
+                    ['Total', sum(self.results.values())]]
+            writer.writerows(data)
