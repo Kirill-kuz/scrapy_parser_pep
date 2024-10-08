@@ -1,7 +1,8 @@
+import re
+
 import scrapy
 
 from pep_parse.items import PepParseItem
-import re
 
 
 class PepSpider(scrapy.Spider):

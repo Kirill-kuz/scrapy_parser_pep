@@ -3,13 +3,13 @@ from pathlib import Path
 
 BOT_NAME = 'pep_parse'
 
-SPIDER_MODULES = ['pep_parse.spiders']
+SPIDER_MODULES = [f'{BOT_NAME}.spiders']
+NEWSPIDER_MODULE = f'{BOT_NAME}.spiders'
 
 ROBOTSTXT_OBEY = True
 
 BASE_DIR = Path(__file__).parent.parent
 
-FIELDS_NAME = ('Статус', 'Количество')
 FILE_NAME = 'status_summary_{time}.csv'
 DIR_OUTPUT = 'results'
 DATE_FORMAT = '%Y-%m-%dT%H-%M-%S'
